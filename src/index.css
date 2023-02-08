@@ -8,7 +8,8 @@ body {
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;*/
   font-family: 'Open Sans',sans-serif;
-  /*font-family: 'M PLUS 1p', sans-serif;*/
+  background-color: ghostwhite;
+  /* font-family: 'M PLUS 1p', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-image: url('./bg.png');
@@ -21,7 +22,7 @@ body {
   animation-fill-mode: none;
   animation-play-state: running;
   animation-name: gradientTransform;
-  background-repeat: no-repeat;
+  background-repeat: no-repeat; */
 }
 
 code {

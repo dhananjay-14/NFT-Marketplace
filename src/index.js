@@ -14,6 +14,7 @@ import Profile from './components/Profile';
 import NFTPage from './components/NFTpage';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
 root.render(
   <React.StrictMode>
     <BrowserRouter>

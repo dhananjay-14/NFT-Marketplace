@@ -1,7 +1,7 @@
 import Navbar from "./Navbar";
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import MarketplaceJSON from "../Marketplace.json";
-import axios from "axios";
+
 import { useState } from "react";
 import NFTTile from "./NFTTile";
 
@@ -14,27 +14,28 @@ export default function Profile () {
     async function getNFTData(tokenId) {
         const ethers = require("ethers");
         let sumPrice = 0;
-        //After adding your Hardhat network to your metamask, this code will get providers and signers
+       
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
         const addr = await signer.getAddress();
 
-        //Pull the deployed contract instance
+     
         let contract = new ethers.Contract(MarketplaceJSON.address, MarketplaceJSON.abi, signer)
 
         //create an NFT Token
         let transaction = await contract.getMyNFTs()
 
-        /*
-        * Below function takes the metadata from tokenURI and the data returned by getMyNFTs() contract function
-        * and creates an object of information that is to be displayed
-        */
         
         const items = await Promise.all(transaction.map(async i => {
             const tokenURI = await contract.tokenURI(i._tokenId);
-            let meta = await axios.get(tokenURI);
-            meta = meta.data;
-
+            // let meta = await axios.get(tokenURI);
+            // meta = meta.data;
+            const response=await fetch(tokenURI);
+            if(!response.ok){
+                throw new Error;
+            }
+            const meta=await response.json();
+            console.log(meta);
             let price = ethers.utils.formatUnits(i.price.toString(), 'ether');
             let item = {
                 price,
@@ -61,18 +62,18 @@ export default function Profile () {
         getNFTData(tokenId);
 
     return (
-        <div className="profileClass" style={{"min-height":"100vh"}}>
+        <div className="profileClass">
             <Navbar></Navbar>
             <div className="profileClass">
-            <div className="flex text-center flex-col mt-11 md:text-2xl text-white">
-                <div className="mb-5">
-                    <h2 className="font-bold">Wallet Address</h2>  
-                    {address}
+            <div className="flex text-center flex-col mt-11 md:text-2xl text-black">
+                <div className="mb-5 mt-20">
+                    <h2 className="font-bold">Wallet Address : {address}</h2>  
+                    
                 </div>
             </div>
-            <div className="flex flex-row text-center justify-center mt-10 md:text-2xl text-white">
+            <div className="flex flex-row text-center justify-center mt-10 md:text-2xl text-black">
                     <div>
-                        <h2 className="font-bold">No. of NFTs</h2>
+                        <h2 className="font-bold">Total NFTs</h2>
                         {data.length}
                     </div>
                     <div className="ml-20">
@@ -80,9 +81,9 @@ export default function Profile () {
                         {totalPrice} ETH
                     </div>
             </div>
-            <div className="flex flex-col text-center items-center mt-11 text-white">
+            <div className="flex flex-col text-center items-center mt-11 text-black">
                 <h2 className="font-bold">Your NFTs</h2>
-                <div className="flex justify-center flex-wrap max-w-screen-xl">
+                <div className="flex mt-5 justify-between flex-wrap max-w-screen-xl text-center">
                     {data.map((value, index) => {
                     return <NFTTile data={value} key={index}></NFTTile>;
                     })}

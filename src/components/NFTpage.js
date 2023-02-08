@@ -1,6 +1,5 @@
 import Navbar from "./Navbar";
-import axie from "../tile.jpeg";
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import MarketplaceJSON from "../Marketplace.json";
 import axios from "axios";
 import { useState } from "react";
@@ -46,15 +45,15 @@ async function getNFTData(tokenId) {
 async function buyNFT(tokenId) {
     try {
         const ethers = require("ethers");
-        //After adding your Hardhat network to your metamask, this code will get providers and signers
+       
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
 
-        //Pull the deployed contract instance
+        
         let contract = new ethers.Contract(MarketplaceJSON.address, MarketplaceJSON.abi, signer);
         const salePrice = ethers.utils.parseUnits(data.price, 'ether')
         updateMessage("Buying the NFT... Please Wait (Upto 5 mins)")
-        //run the executeSale function
+        
         let transaction = await contract.processPurchase(tokenId, {value:salePrice});
         await transaction.wait();
 
@@ -76,7 +75,7 @@ async function buyNFT(tokenId) {
             <Navbar></Navbar>
             <div className="flex ml-20 mt-20">
                 <img src={data.image} alt="" className="w-2/5" />
-                <div className="text-xl ml-20 space-y-8 text-white shadow-2xl rounded-lg border-2 p-5">
+                <div className="text-xl ml-20 space-y-8 text-black shadow-2xl rounded-lg border-2 p-5">
                     <div>
                         Name: {data.name}
                     </div>
@@ -94,8 +93,8 @@ async function buyNFT(tokenId) {
                     </div>
                     <div>
                     { currAddress == data.owner || currAddress == data.seller ?
-                        <button className="enableEthereumButton bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-sm" onClick={() => buyNFT(tokenId)}>Buy this NFT</button>
-                        : <div className="text-emerald-700">You are the owner of this NFT</div>
+                        <div className="text-emerald-700">You are the owner of this NFT</div>
+                        :<button className="enableEthereumButton bg-blue-500 hover:bg-blue-700 text-black font-bold py-2 px-4 rounded text-sm" onClick={() => buyNFT(tokenId)}>Buy this NFT</button>  
                     }
                     
                     <div className="text-green text-center mt-3">{message}</div>
