@@ -18,9 +18,12 @@ export default function SellNFT () {
     const changeFile = async(e)=>{
         var file = e.target.files[0];
         try {
+            updateMessage("Uploading image to IPFS. Please wait....")
             const response = await uploadFileToIPFS(file);
             if(response.success == true){
-                console.log("successfully uploaded image to Pinata ipfs at:",response.pinataURL)
+                updateMessage("successfully uploaded image to Pinata ipfs")
+                console.log("successfully uploaded image to Pinata ipfs at:",response.pinataURL);
+                window.alert("successfully uploaded image to Pinata ipfs at:",response.pinataURL)
                 setFileURL(response.pinataURL)
             }
         } catch (error) {
@@ -55,7 +58,7 @@ export default function SellNFT () {
             const metadataURI = await uploadMetadataToIPFS();
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const signer = provider.getSigner();
-            updateMessage("Please wait, uploading.... ")
+            updateMessage("Please wait, uploading NFT.... ")
 
             let contract = new ethers.Contract(Marketplace.address,Marketplace.abi,signer);
 
@@ -63,7 +66,7 @@ export default function SellNFT () {
             let listingFee = await contract.getListingFee();
             listingFee = listingFee.toString();
             console.log("reached till transaction")
-            let transaction = await contract.createAndListNFT(metadataURI, price, { value: listingFee });
+            let transaction = await contract.createAndListNFT(metadataURI, price,{value: listingFee});
             await transaction.wait();
 
             alert("NFT created successfully")
@@ -95,13 +98,13 @@ export default function SellNFT () {
                     <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="number" placeholder="in ETH" step="0.01" value={formParams.price} onChange={e => updateFormParams({...formParams, price: e.target.value})}></input>
                 </div>
                 <div>
-                    <label className="block text-blue-500 text-sm font-bold mb-2" htmlFor="image">Upload Image</label>
+                    <label className="block text-blue-500 text-sm font-bold mb-2" htmlFor="image">Upload Image </label>
                     <input type={"file"} onChange={changeFile}></input>
                 </div>
                 <br></br>
                 <div className="text-green text-center">{message}</div>
-                <button onClick={listNFT} className="font-bold mt-10 w-full bg-blue-500 text-white rounded p-2 shadow-lg">
-                    List NFT
+                <button onClick={listNFT} className="font-bold mt-10 w-full bg-black text-white hover:bg-green-500 rounded p-2 shadow-lg">
+                    Mint and List NFT
                 </button>
             </form>
         </div>

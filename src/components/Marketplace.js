@@ -64,7 +64,7 @@ return (
             <div className="md:text-xl font-bold text-black">
                 Top NFTs
             </div>
-            <div className="flex mt-5 justify-between flex-wrap max-w-screen-xl text-center">
+            <div className="flex mt-5 flex-wrap text-center">
                 {data.map((value, index) => {
                     return <NFTTile data={value} key={index}></NFTTile>;
                 })}
