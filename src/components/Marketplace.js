@@ -38,11 +38,12 @@ async function getAllNFTs() {
         let item = {
             price,
             tokenId: i._tokenId.toNumber(),
-            seller: i.seller,
-            owner: i.owner,
+            currentHolder: i.currentHolder,
+            creator: i.creator,
             image: meta.image,
             name: meta.name,
             description: meta.description,
+            royalty: i.Royalty
         }
         return item;
     }))

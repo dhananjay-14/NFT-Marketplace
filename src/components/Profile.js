@@ -39,9 +39,10 @@ export default function Profile () {
             let price = ethers.utils.formatUnits(i.price.toString(), 'ether');
             let item = {
                 price,
+                royalty:i.Royalty,
                 tokenId: i._tokenId.toNumber(),
-                seller: i.seller,
-                owner: i.owner,
+                currentHolder: i.currentHolder,
+                creator: i.creator,
                 image: meta.image,
                 name: meta.name,
                 description: meta.description,

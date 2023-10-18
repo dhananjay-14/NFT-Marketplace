@@ -6,10 +6,11 @@ import Marketplace from '../Marketplace.json';
 
 
 export default function SellNFT () {
-    const [formParams, updateFormParams] = useState({ name: '', description: '', price: ''});
+    const [formParams, updateFormParams] = useState({ name: '', description: '', price: '',royalty:''});
     const [fileURL, setFileURL] = useState(null);
     const ethers = require("ethers");
     const [message, updateMessage] = useState('');
+   //const [royalty,setRoyalty] = useState(0);
 
     // const location = useLocation();
 
@@ -23,7 +24,7 @@ export default function SellNFT () {
             if(response.success == true){
                 updateMessage("successfully uploaded image to Pinata ipfs")
                 console.log("successfully uploaded image to Pinata ipfs at:",response.pinataURL);
-                window.alert("successfully uploaded image to Pinata ipfs at:",response.pinataURL)
+                window.alert("successfully uploaded image to Pinata ipfs!!!");
                 setFileURL(response.pinataURL)
             }
         } catch (error) {
@@ -32,13 +33,13 @@ export default function SellNFT () {
     }
 
     const uploadMetadataToIPFS=async()=>{
-        const {name,description,price}=formParams;
+        const {name,description,price,royalty}=formParams;
 
-        if(!name || !description || !price || !fileURL)
+        if(!name || !description || !price || !royalty || !fileURL)
         return
 
         const nftJSON = {
-            name,description,price,image:fileURL
+            name,description,price,royalty,image:fileURL
         };
 
         try {
@@ -62,16 +63,17 @@ export default function SellNFT () {
 
             let contract = new ethers.Contract(Marketplace.address,Marketplace.abi,signer);
 
-            let price = ethers.utils.parseUnits(formParams.price,'ether')
+            let price = ethers.utils.parseUnits(formParams.price,'ether');
+            let royalty = formParams.royalty;
             let listingFee = await contract.getListingFee();
             listingFee = listingFee.toString();
             console.log("reached till transaction")
-            let transaction = await contract.createAndListNFT(metadataURI, price,{value: listingFee});
+            let transaction = await contract.createAndListNFT(metadataURI, price,royalty,{value: listingFee});
             await transaction.wait();
 
             alert("NFT created successfully")
             updateMessage("")
-            updateFormParams({name:'',description:'',price:''});
+            updateFormParams({name:'',description:'',price:'',royalty:''});
             window.location.replace('/');
             
         } catch(e){
@@ -96,6 +98,10 @@ export default function SellNFT () {
                 <div className="mb-6">
                     <label className="block text-blue-500 text-sm font-bold mb-2" htmlFor="price">Price (in ETH)</label>
                     <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="number" placeholder="in ETH" step="0.01" value={formParams.price} onChange={e => updateFormParams({...formParams, price: e.target.value})}></input>
+                </div>
+                <div className="mb-6">
+                    <label className="block text-blue-500 text-sm font-bold mb-2" htmlFor="price">Royalty (in %)</label>
+                    <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="number" placeholder="in %" step="0.01" value={formParams.royalty} onChange={e => updateFormParams({...formParams, royalty: e.target.value})}></input>
                 </div>
                 <div>
                     <label className="block text-blue-500 text-sm font-bold mb-2" htmlFor="image">Upload Image </label>

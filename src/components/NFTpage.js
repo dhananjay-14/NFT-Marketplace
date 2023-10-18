@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import MarketplaceJSON from "../Marketplace.json";
 import axios from "axios";
 import { useState } from "react";
+import { list } from "postcss";
 
 export default function NFTPage (props) {
 
@@ -10,6 +11,7 @@ const [data, updateData] = useState({});
 const [dataFetched, updateDataFetched] = useState(false);
 const [message, updateMessage] = useState("");
 const [currAddress, updateCurrAddress] = useState("0x");
+const [sellingprice,updateSellingprice] = useState('');
 
 async function getNFTData(tokenId) {
     const ethers = require("ethers");
@@ -23,14 +25,17 @@ async function getNFTData(tokenId) {
     const tokenURI = await contract.tokenURI(tokenId);
     const listedToken = await contract.getNFT(tokenId);
     let meta = await axios.get(tokenURI);
+    let showprice = ethers.utils.formatUnits(listedToken.price.toString(), 'ether');
     meta = meta.data;
     console.log(listedToken);
 
     let item = {
-        price: meta.price,
+        price: showprice,
+        isListed: listedToken.isListed,
+        royalty: listedToken.Royalty,
         tokenId: tokenId,
-        seller: listedToken.seller,
-        owner: listedToken.owner,
+        currentHolder: listedToken.currentHolder,
+        creator: listedToken.creator,
         image: meta.image,
         name: meta.name,
         description: meta.description,
@@ -65,6 +70,27 @@ async function buyNFT(tokenId) {
     }
 }
 
+async function sellMyNFT(tokenId,sellingPrice) {
+    try {
+        const ethers = require("ethers");
+       
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const salePrice = ethers.utils.parseUnits(sellingPrice, 'ether')
+        let contract = new ethers.Contract(MarketplaceJSON.address, MarketplaceJSON.abi, signer);
+        updateMessage("Selling your NFT... Please Wait")
+        
+        let transaction = await contract.sellMyNFT(tokenId,salePrice);
+        await transaction.wait();
+
+        alert('You successfully sold and listed the NFT!');
+        updateMessage("");
+    }
+    catch(e) {
+        alert("Upload Error"+e)
+    }
+}
+
     const params = useParams();
     const tokenId = params.tokenId;
     if(!dataFetched)
@@ -86,17 +112,30 @@ async function buyNFT(tokenId) {
                         <b>Price:</b> <span className="">{data.price + " ETH"}</span>
                     </div>
                     <div>
-                        <b>Owner:</b> <span className="text-sm">{data.owner}</span>
+                        <b>Royalty:</b> <span className="">{data.royalty + " %"}</span>
                     </div>
                     <div>
-                        <b>Seller:</b> <span className="text-sm">{data.seller}</span>
+                        <b>Creator:</b> <span className="text-sm">{data.creator}</span>
                     </div>
                     <div>
-                    { currAddress == data.owner || currAddress == data.seller ?
-                        <div className="text-emerald-700">You are the owner of this NFT</div>
+                        <b>Current Holder:</b> <span className="text-sm">{data.currentHolder}</span>
+                    </div>
+                    <div>
+                    { (currAddress == data.currentHolder)?
+                    <> <div className="text-emerald-700">You are the owner of this NFT</div>
+                    </>
                         :<button className="enableEthereumButton w-4/5  bg-black hover:bg-green-500 text-white hover:text-white font-bold py-2 px-4 rounded text-sm" onClick={() => buyNFT(tokenId)}>Buy this NFT</button>  
                     }
-                    
+                    {
+                        (data.currentHolder != data.creator && currAddress==data.currentHolder && !data.isListed) && (
+                            <>
+                             <div className="mb-6">
+                            <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="number" placeholder="Enter selling price in ETH" step="0.01" value={sellingprice} onChange={e => updateSellingprice(e.target.value)}></input>
+                            </div>
+                            <button className="enableEthereumButton w-4/5  bg-black hover:bg-green-500 text-white hover:text-white font-bold py-2 px-4 rounded text-sm" onClick={() => sellMyNFT(tokenId,sellingprice)}>Sell Your NFT</button>  
+                            </>
+                        )
+                    }
                     <div className="text-green text-center mt-3">{message}</div>
                     </div>
                 </div>
