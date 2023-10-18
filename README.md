@@ -1,4 +1,4 @@
-# Basic NFT Marketplace end to end
+# NFT Marketplace
 Welcome to our basic NFT marketplace project, built on Solidity contracts and deployed on the Sepolia testnet. In this endeavor, I have combined the power of blockchain technology and smart contracts to create a user-friendly and functional NFT marketplace. The platform offers a seamless experience for users to mint, buy, and sell NFTs, ensuring security, transparency, and ease of use.
 
 Key Features:
