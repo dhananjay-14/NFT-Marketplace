@@ -13,7 +13,7 @@ Creators can mint their digital creations into unique NFTs, allowing them to sho
 Users can list their NFTs for sale, providing a marketplace where collectors and enthusiasts can discover, purchase, and own digital art and collectibles.
 
 4. Creator Royalty:
-We support creator royalties, ensuring artists receive a portion of the sale price when their NFTs are resold, providing artists with a sustainable revenue stream.
+It supports creator royalties, ensuring artists receive a portion of the sale price when their NFTs are resold, providing artists with a sustainable revenue stream.
 
 6. IPFS Image Upload:
 To maintain a decentralized and efficient approach, we leverage IPFS for secure and distributed image storage. Users can upload images for their NFTs with confidence in data integrity and availability.
